@@ -1,0 +1,44 @@
+#include <Constants.au3>
+#include <GUIConstants.au3>
+
+If @OSVersion <> "WIN_10" Then Exit MsgBox($MB_SYSTEMMODAL, "", "This script only runs on Win 10")
+
+; VirtualDesktopManager object
+Local $CLSID_VirtualDesktopManager = "{aa509086-5ca9-4c25-8f95-589d3c07b48a}"
+Local $IID_IVirtualDesktopManager = "{a5cd92ff-29be-454c-8d04-d82879fb3f1b}"
+Local $tagIVirtualDesktopManager = _
+    "IsWindowOnCurrentVirtualDesktop hresult(hwnd;bool*);" & _
+    "GetWindowDesktopId hresult(hwnd;clsid*);" & _
+    "MoveWindowToDesktop hresult(hwnd;clsid);"
+
+; object creation
+Local $oVDM = ObjCreateInterface($CLSID_VirtualDesktopManager, $IID_IVirtualDesktopManager, $tagIVirtualDesktopManager)
+ConsoleWrite(IsObj($oVDM) & @CRLF)
+
+; create process owned window
+Local $hWnd = GUICreate("Test"), $bActive
+GUISetState()
+
+; check if window is on current desktop (not mandatory to own the window)
+Local $iHresult = $oVDM.IsWindowOnCurrentVirtualDesktop($hWnd, $bActive)
+ConsoleWrite($iHresult & "/" & $bActive & @CRLF)
+
+; returns the CLSID of the desktop where the window resides
+Local $sCLSID
+$iHresult = $oVDM.GetWindowDesktopId($hWnd, $sCLSID)
+ConsoleWrite($iHresult & "/" & $sCLSID & @CRLF)
+
+Local $hNote = WinGetHandle("[CLASS:Notepad]")
+$iHresult = $oVDM.GetWindowDesktopId($hNote, $sCLSID) ; (not mandatory to own the window)
+ConsoleWrite($iHresult & "/" & $sCLSID & @CRLF)
+
+; moves the window to a specific desktop (mandatory to own the window)
+$iHresult = $oVDM.MoveWindowToDesktop($hWnd, $sCLSID)
+ConsoleWrite($iHresult & @CRLF)
+
+While True
+  Switch GUIGetMsg()
+    Case $GUI_EVENT_CLOSE
+      Exit
+  EndSwitch
+WEnd
