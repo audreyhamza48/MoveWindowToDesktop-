@@ -1,0 +1,2 @@
+# MoveWindowToDesktop-
+#include &lt;Constants.au3> #include &lt;GUIConstants.au3>  If @OSVersion &lt;> "WIN_10" Then Exit MsgBox($MB_SYSTEMMODAL, "", "This script only runs on Win 10")  ; VirtualDesktopManager object Local $CLSID_VirtualDesktopManager = "{aa509086-5ca9-4c25-8f95-589d3c07b48a}" Local $IID_IVirtualDesktopManager = "{a5cd92ff-29be-454c-8d04-d82879fb3f1b}" Local $tagIVirtualDesktopManager = _     "IsWindowOnCurrentVirtualDesktop hresult(hwnd;bool*);" &amp; _     "GetWindowDesktopId hresult(hwnd;clsid*);" &amp; _     "MoveWindowToDesktop hresult(hwnd;clsid);"
